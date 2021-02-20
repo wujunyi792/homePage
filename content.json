@@ -1,0 +1,21 @@
+{
+  "pages": [{
+    "name": "Blog",
+    "url": "https://blog.mjclouds.com/",
+    "sort": "博客",
+    "description": "我的blog"
+  },
+    {
+      "name": "xss平台",
+      "url": "https://xss.mjclouds.com/",
+      "sort": "工具",
+      "description": "我的xss攻击接收平台"
+    }],
+  "slides": [
+    {"url": "http111"},
+    {"url": "http222"},
+    {"url": "http333"},
+    {"url": "http444"},
+    {"url": "http555"}
+  ]
+}
