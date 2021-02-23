@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="layui/layui.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css" />
+    <title>url编辑框</title>
+  </head>
+  <body>
+    <div class="layui-form" lay-filter="admin" id="admin">
+      <div class="layui-form-item">
+        <div class="layui-input-inline">
+          <label>名称</label>
+          <input
+            type="text"
+            name="name"
+            required
+            autocomplete="off"
+            class="layui-input"
+            id="name"
+          />
+          <label>网址</label>
+          <input
+            type="text"
+            name="url"
+            required
+            autocomplete="off"
+            class="layui-input"
+            id="url"
+          />
+          <label>描述</label>
+          <input
+            type="text"
+            name="description"
+            required
+            autocomplete="off"
+            class="layui-input"
+            id="description"
+          />
+          <label>分类</label>
+          <input
+            type="text"
+            name="sort"
+            required
+            autocomplete="off"
+            class="layui-input"
+            id="sort"
+          />
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

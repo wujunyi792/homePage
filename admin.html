@@ -1,10 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="layui/css/layui.css" />
+    <!-- <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow-y: hidden;
+      }
+    </style>
+    <script>
+      window.onerror = function () {
+        return true;
+      };
+      $(function () {
+        header = H;
+        var h = $(window).height();
+        $("#main").height(h - headerH + "px");
+      });
+    </script> -->
+    <title>mjclouds主页后台管理系统</title>
+  </head>
+  <body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+      <div class="layui-header">
+        <div class="layui-logo">Mjclouds 主页后台</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+          <li class="layui-nav-item"><a href="">控制台</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+          <li class="layui-nav-item">
+            <a href="javascript:;">
+              <img src="http://t.cn/RCzsdCq" class="layui-nav-img" />
+              贤心
+            </a>
+            <dl class="layui-nav-child">
+              <dd><a href="">基本资料</a></dd>
+              <dd><a href="">安全设置</a></dd>
+            </dl>
+          </li>
+          <li class="layui-nav-item"><a href="">退了</a></li>
+        </ul>
+      </div>
 
-</body>
+      <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+          <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+          <ul class="layui-nav layui-nav-tree" lay-filter="test">
+            <li class="layui-nav-item layui-nav-itemed">
+              <a class="" href="javascript:;">通用设置</a>
+              <dl class="layui-nav-child">
+                <dd><a href="url_edit.html">轮播图设置</a></dd>
+                <dd><a href="javascript:;">网站信息设置</a></dd>
+              </dl>
+            </li>
+            <li class="layui-nav-item"><a href="">邮箱助手</a></li>
+            <li class="layui-nav-item"><a href="">TODO List</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <!-- <div style="padding: 15px">内容主体区域</div> -->
+        <iframe
+          src="https://blog.mjclouds.com/"
+          frameborder="0"
+          id="main"
+          height="100%"
+          width="100%"
+        ></iframe>
+      </div>
+
+      <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        mjclouds.com 2021
+      </div>
+    </div>
+    <script src="layui/layui.js"></script>
+    <script>
+      //JavaScript代码区域
+      layui.use("element", function () {
+        var element = layui.element;
+        var $ = layui.jquery;
+        $(document).ready(function () {
+          $("dd>a").click(function (e) {
+            e.preventDefault();
+            console.log($(this).attr("href"));
+            $("#main").attr("src", $(this).attr("href"));
+          });
+        });
+      });
+    </script>
+  </body>
 </html>

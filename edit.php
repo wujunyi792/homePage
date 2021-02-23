@@ -8,31 +8,46 @@
     $success_message = json_encode(array('status'=>"success"));
     $fail_message_arr = array('status'=>"fail");
 
+    if ($method == 'changeUrlData') {
+        $json_data = file_get_contents('content.json');
+        $json_arr = json_decode($json_data, true);
+        $id = isThisArr('pages', $_GET);
+        $new_arr = array(
+            'name'=>$name,
+            'url'=>$url,
+            'sort'=>$sort,
+            'description'=>$description
+        );
+        $json_arr['pages'][$id] = $new_arr;
+        file_put_contents('content.json', json_encode($json_arr, JSON_UNESCAPED_UNICODE));
+}
+
+    if ($method == 'deletePage') {
+        $json_data = file_get_contents('content.json');
+        $json_arr = json_decode($json_data, true);
+        $id = isThisArr2('pages', $_GET);
+        $json_arr['pages'] = array_diff_key($json_arr['pages'], [$id=>"a"]);
+        file_put_contents('content.json', json_encode($json_arr, JSON_UNESCAPED_UNICODE));
+        echo $success_message;
+    }
+
     if ($method == 'getData') {
         $json_data = file_get_contents('content.json');
         $json_arr = json_decode($json_data, true);
+//        print_r($json_arr);
         echo json_encode($json_arr);
         }
 
     if ($method == 'addPage'){
-        if (isset($_GET['name']) & isset($_GET['url']) & isset($_GET['description']) & isset($_GET['sort'])){
+        if (isset($_GET['name']) && isset($_GET['url']) && isset($_GET['description']) && isset($_GET['sort']) && $name != ""&& $url != ""&& $description != ""&& $sort != ""){
             if (addPage($name, $url, $description, $sort)){
                 echo $success_message;
             }else{
                 echo json_encode($fail_message_arr);
             }
         }else{
-            $message = array(
-                'status'=>'fail',
-                'reason'=>'something unset!',
-                'name'=>isset($_GET['name']),
-                'url'=>isset($_GET['url']),
-                'description'=>isset($_GET['description']),
-                'sort'=>isset($_GET['sort']),
-            );
-            echo json_encode($message);
+            echo json_encode($fail_message_arr);
         }
-
     }
 
     if ($method == 'addSilde'){
@@ -83,3 +98,32 @@
             return false;
         }
     }
+
+    function isThisArr($where,$content){
+        $json_data = file_get_contents('content.json');
+        $json_arr = json_decode($json_data, true);
+        foreach ($json_arr[$where] as $k => $v){
+            foreach ($content as $kk => $vv){
+                if (strpos(serialize($v), $vv)){
+                    return $k;
+                }
+            }
+        }
+        return false;
+    }
+
+    function isThisArr2($where,$content){
+        $json_data = file_get_contents('content.json');
+        $json_arr = json_decode($json_data, true);
+        $i = 0;
+        foreach ($json_arr[$where] as $k => $v){
+            foreach ($content as $kk => $vv){
+                if (strpos(serialize($v), $vv)){
+                    $i++;
+                }
+                if ($i == 4){return $k;}
+            }
+            $i = 0;
+        }
+        return false;
+}

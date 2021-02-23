@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>表单操作demo</title>
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all" />
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+  </head>
+  <body>
+    <table id="demo" lay-filter="test"></table>
+
+    <!--    script部分-->
+
+    <script src="/layui/layui.js"></script>
+    <script type="text/html" id="barDemo">
+      <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"
+        >查看</a
+      >
+      <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"
+        >删除</a
+      >
+      <a
+        class="layui-btn layui-btn-radius layui-btn-warm layui-btn-xs"
+        lay-event="add"
+        ><i class="layui-icon">&#xe608;</i>新增</a
+      >
+    </script>
+
+    <script>
+      layui.use("table", function () {
+        var table = layui.table;
+
+        //第一个实例
+        table.render({
+          elem: "#demo",
+          height: 312,
+          toolbar: true,
+          url: "/homePage.io/edit.php", //数据接口
+          method: "get",
+          // headers: { method: "getData" },
+          where: { method: "getData" }, //如果无需自定义请求参数，可不加该参数
+          page: true, //开启分页
+          cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+          defaultToolbar: [
+            "filter",
+            "exports",
+            "print",
+            {
+              //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+              title: "提示",
+              layEvent: "LAYTABLE_TIPS",
+              icon: "layui-icon-tips",
+            },
+          ],
+          cols: [
+            [
+              //表头
+              //   {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+              // { type: "checkbox", fixed: "left" },
+              { field: "name", title: "名称" },
+              { field: "url", title: "网址" },
+              { field: "description", title: "描述" },
+              { field: "sort", title: "分类", sort: true },
+              {
+                field: "right",
+                title: "操作",
+                width: 300,
+                toolbar: "#barDemo",
+              },
+            ],
+          ],
+          response: {
+            statusCode: 200, //重新规定成功的状态码为 200，table 组件默认为 0
+          },
+          parseData: function (res) {
+            //将原始数据解析成 table 组件所规定的数据
+            return {
+              code: 200,
+              data: res.pages, //解析数据列表
+            };
+          },
+        });
+
+        //监听行工具事件
+        table.on("tool(test)", function (obj) {
+          var data = obj.data;
+          console.log(obj);
+          if (obj.event === "detail") {
+            layer.msg(data.url);
+          } else if (obj.event === "del") {
+            layer.confirm("真的删除行么", function (index) {
+              obj.del();
+              $.ajax({
+                url: "//localhost/homePage.io/edit.php",
+                type: "get",
+                contentType: "application/json;charset=utf-8",
+                dataType: "text",
+                data: {
+                  method: "deletePage",
+                  name: data.name,
+                  url: data.url,
+                  description: data.description,
+                  sort: data.sort,
+                },
+                success: function (res) {
+                  layer.msg(res);
+                },
+                error: function () {
+                  layer.msg("删除失败");
+                },
+              });
+              layer.close(index);
+            });
+          } else if (obj.event === "edit") {
+            layer.open({
+              type: 2,
+              title: "Page信息编辑",
+              content: "urlEdit.html",
+              maxmin: true,
+              area: ["500px", "450px"],
+              btn: ["提交", "取消"],
+              yes: function (index, layero) {
+                var url = $(layero)
+                  .find("iframe")[0]
+                  .contentWindow.document.getElementById("url").value;
+                var description = $(layero)
+                  .find("iframe")[0]
+                  .contentWindow.document.getElementById("description").value;
+                var name = $(layero)
+                  .find("iframe")[0]
+                  .contentWindow.document.getElementById("name").value;
+                var sort = $(layero)
+                  .find("iframe")[0]
+                  .contentWindow.document.getElementById("sort").value;
+                obj.update({
+                  name: name,
+                  url: url,
+                  description: description,
+                  sort: sort,
+                });
+
+                $.ajax({
+                  url: "//localhost/homePage.io/edit.php",
+                  type: "get",
+                  contentType: "application/json;charset=utf-8",
+                  dataType: "text",
+                  data: {
+                    method: "changeUrlData",
+                    name: name,
+                    url: url,
+                    description: description,
+                    sort: sort,
+                  },
+                  success: function (res) {
+                    layer.msg("编辑成功");
+                  },
+                  error: function (res) {
+                    layer.msg("编辑失败");
+                  },
+                });
+                layer.close(index);
+              },
+              success: function (layero, index) {
+                var div = layero.find("iframe").contents().find("#admin");
+                var body = layer.getChildFrame("body", index);
+                var ifrmaeWindow = window["layui-layer-iframe" + index];
+                body.find("#name").val(data.name);
+                body.find("#url").val(data.url);
+                body.find("#description").val(data.description);
+                body.find("#sort").val(data.sort);
+              },
+            });
+          } else if (obj.event === "add") {
+            layer.open({
+              type: 2,
+              title: "Page信息编辑",
+              content: "urlEdit.html",
+              maxmin: true,
+              area: ["500px", "450px"],
+              btn: ["提交", "取消"],
+              yes: function (index, layero) {
+                var url = $(layero)
+                  .find("iframe")[0]
+                  .contentWindow.document.getElementById("url").value;
+                var description = $(layero)
+                  .find("iframe")[0]
+                  .contentWindow.document.getElementById("description").value;
+                var name = $(layero)
+                  .find("iframe")[0]
+                  .contentWindow.document.getElementById("name").value;
+                var sort = $(layero)
+                  .find("iframe")[0]
+                  .contentWindow.document.getElementById("sort").value;
+
+                $.ajax({
+                  url: "//localhost/homePage.io/edit.php",
+                  type: "get",
+                  contentType: "application/json;charset=utf-8",
+                  dataType: "text",
+                  data: {
+                    method: "addPage",
+                    name: name,
+                    url: url,
+                    description: description,
+                    sort: sort,
+                  },
+                  success: function (res) {
+                    layer.msg(res);
+                  },
+                  error: function (res) {
+                    layer.msg(res);
+                  },
+                });
+                layer.close(index);
+              },
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
