@@ -5,8 +5,8 @@
     header('Content-Type:application/json');
     require_once ('lazy.php');
 
-    $success_message = json_encode(array('status'=>"success"));
-    $fail_message_arr = array('status'=>"fail");
+    $success_message = json_encode(array('status'=>"修改成功"));
+    $fail_message_arr = json_encode(array('status'=>"修改失败"));
 
     if ($method == 'changeUrlData') {
         $json_data = file_get_contents('content.json');
@@ -19,7 +19,11 @@
             'description'=>$description
         );
         $json_arr['pages'][$id] = $new_arr;
-        file_put_contents('content.json', json_encode($json_arr, JSON_UNESCAPED_UNICODE));
+        if (file_put_contents('content.json', json_encode($json_arr, JSON_UNESCAPED_UNICODE))){
+            echo $success_message;
+        }else{
+            echo $fail_message_arr;
+        }
 }
 
     if ($method == 'deletePage') {
@@ -43,10 +47,12 @@
             if (addPage($name, $url, $description, $sort)){
                 echo $success_message;
             }else{
-                echo json_encode($fail_message_arr);
+                echo $fail_message_arr;
             }
         }else{
-            echo json_encode($fail_message_arr);
+            echo json_encode(array(
+                'status'=>'fail!请补齐信息',
+            ));
         }
     }
 
@@ -66,8 +72,7 @@
         foreach ($json_arr['pages'] as $page){
             if ($page['name'] == $name){
                 die(json_encode(array(
-                    'status'=>'fail',
-                    'reason'=>'repeated WebPage!'
+                    'status'=>'fail!repeated WebPage!',
                 )));
             }
         }

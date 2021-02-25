@@ -85,9 +85,10 @@
         //监听行工具事件
         table.on("tool(test)", function (obj) {
           var data = obj.data;
-          console.log(obj);
+          // console.log(obj);
+          // console.log(data)
           if (obj.event === "detail") {
-            layer.msg(data.url);
+            window.open(data.url,'_blank');
           } else if (obj.event === "del") {
             layer.confirm("真的删除行么", function (index) {
               obj.del();
@@ -104,7 +105,7 @@
                   sort: data.sort,
                 },
                 success: function (res) {
-                  layer.msg(res);
+                  layer.msg(JSON.parse(res).status);
                 },
                 error: function () {
                   layer.msg("删除失败");
@@ -206,7 +207,10 @@
                     sort: sort,
                   },
                   success: function (res) {
-                    layer.msg(res);
+                    layer.msg(JSON.parse(res).status);
+                    setTimeout(function (){
+                      location.reload();
+                    },4000);
                   },
                   error: function (res) {
                     layer.msg(res);
