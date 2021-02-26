@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="layui/layui.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css" />
+    <title>表单操作demo</title>
+    <style>
+        html{
+            height: 100%;
+        }
+        body{
+            display: grid;
+            align-items: center;
+            justify-items: center;
+            height: 100%;
+        }
+        .content{
+            width: 100%;
+        }
+        label{
+            font-size: 25px;
+            letter-spacing: 70px;
+        }
+        .center-item{
+            display: grid;
+            align-items: center;
+            justify-items: center;
+        }
+    </style>
+    <title>url编辑框</title>
+</head>
+<body>
+<div class="content" lay-filter="admin" id="admin">
+<!--    <div class="layui-form content" lay-filter="admin" id="admin">-->
+<!--    <div>-->
+        <div class="center-item">
+        <label>网址</label>
+        <br>
+        <br>
+        <input
+                type="text"
+                name="url"
+                required
+                autocomplete="off"
+                class="layui-input inPut"
+                id="url"
+                style="width: 75%"
+        />
+    </div>
+</div>
+</body>
+</html>

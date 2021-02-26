@@ -24,7 +24,22 @@
         }else{
             echo $fail_message_arr;
         }
-}
+    }
+
+    if ($method == 'changePictureData') {
+        $json_data = file_get_contents('content.json');
+        $json_arr = json_decode($json_data, true);
+        $id = isThisArr('slides', [$oldUrl]);
+        $new_arr = array(
+            'url'=>$newUrl,
+        );
+        $json_arr['slides'][$id] = $new_arr;
+        if (file_put_contents('content.json', json_encode($json_arr, JSON_UNESCAPED_UNICODE))){
+            echo $success_message;
+        }else{
+            echo $fail_message_arr;
+        }
+    }
 
     if ($method == 'deletePage') {
         $json_data = file_get_contents('content.json');
@@ -38,9 +53,8 @@
     if ($method == 'getData') {
         $json_data = file_get_contents('content.json');
         $json_arr = json_decode($json_data, true);
-//        print_r($json_arr);
         echo json_encode($json_arr);
-        }
+    }
 
     if ($method == 'addPage'){
         if (isset($_GET['name']) && isset($_GET['url']) && isset($_GET['description']) && isset($_GET['sort']) && $name != ""&& $url != ""&& $description != ""&& $sort != ""){
@@ -56,14 +70,83 @@
         }
     }
 
-    if ($method == 'addSilde'){
-        if (isset($_GET['url'])){
+    if ($method == 'addPicture'){
+        if (isset($_GET['url']) & $url != ""){
             if (addSlide($url)){
                 echo $success_message;
             }else{
-                echo json_encode($fail_message_arr);
+                echo $fail_message_arr;
             }
+        }else{
+            echo json_encode(array(
+                'status'=>'fail!请补齐信息',
+            ));
         }
+    }
+
+
+    if ($method == 'rankChange'){
+        if ($how == "up"){
+            $id = isThisArr("slides", [$url]);
+            if ($id == 0){
+                die(json_encode(array(
+                    'status'=>'fail ! 已经是第一张图',
+                )));
+            }
+            if (rankUp($id)){
+                echo json_encode(array(
+                    'status'=>'成功',
+                ));
+            }else{
+                echo json_encode(array(
+                    'status'=>'fail ! 未知错误',
+                ));
+            };
+        }else if ($how == "down"){
+            $id = isThisArr("slides", [$url]);
+            if ($id == sizeof(json_decode(file_get_contents('content.json'), true)['slides'])-1){
+                die(json_encode(array(
+                    'status'=>'fail ! 已经是最后一张图',
+                )));
+            }
+            if (rankDown($id)){
+                echo json_encode(array(
+                    'status'=>'成功',
+                ));
+            }else{
+                echo json_encode(array(
+                    'status'=>'fail ! 未知错误',
+                ));
+            };
+        }
+    }
+
+    function rankUp($id){
+        try {
+            $json_data = file_get_contents('content.json');
+            $json_arr = json_decode($json_data, true);
+            $temp = $json_arr['slides'][$id-1];
+            $json_arr['slides'][$id-1] = $json_arr['slides'][$id];
+            $json_arr['slides'][$id] = $temp;
+            file_put_contents('content.json', json_encode($json_arr, JSON_UNESCAPED_UNICODE));
+        }catch (Expextion $e){
+            return false;
+        }
+        return true;
+    }
+
+    function rankDown($id){
+        try {
+            $json_data = file_get_contents('content.json');
+            $json_arr = json_decode($json_data, true);
+            $temp = $json_arr['slides'][$id+1];
+            $json_arr['slides'][$id+1] = $json_arr['slides'][$id];
+            $json_arr['slides'][$id] = $temp;
+            file_put_contents('content.json', json_encode($json_arr, JSON_UNESCAPED_UNICODE));
+        }catch (Expextion $e){
+            return false;
+        }
+        return true;
     }
 
     function addPage($name, $url, $description, $sort){
@@ -131,4 +214,4 @@
             $i = 0;
         }
         return false;
-}
+    }

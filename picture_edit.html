@@ -13,18 +13,12 @@
 
 <script src="/layui/layui.js"></script>
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"
-    >查看</a
-    >
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"
-    >删除</a
-    >
-    <a
-            class="layui-btn layui-btn-radius layui-btn-warm layui-btn-xs"
-            lay-event="add"
-    ><i class="layui-icon">&#xe608;</i>新增</a
-    >
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="up">上移</a>
+    <a class="layui-btn layui-btn-xs" lay-event="down">下移</a>
+    <a class="layui-btn layui-btn-radius layui-btn-warm layui-btn-xs" lay-event="add" ><i class="layui-icon">&#xe608;</i>新增</a>
 </script>
 
 <script>
@@ -34,13 +28,12 @@
         //第一个实例
         table.render({
             elem: "#demo",
-            height: 312,
+            height: 700,
             toolbar: true,
             url: "/homePage.io/edit.php", //数据接口
             method: "get",
-            // headers: { method: "getData" },
             where: { method: "getData" }, //如果无需自定义请求参数，可不加该参数
-            page: true, //开启分页
+            page: false, //开启分页
             cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
             defaultToolbar: [
                 "filter",
@@ -55,17 +48,11 @@
             ],
             cols: [
                 [
-                    //表头
-                    //   {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-                    // { type: "checkbox", fixed: "left" },
-                    { field: "name", title: "名称" },
-                    { field: "url", title: "网址" },
-                    { field: "description", title: "描述" },
-                    { field: "sort", title: "分类", sort: true },
+                    { field: "url", title: "图片地址" },
                     {
                         field: "right",
                         title: "操作",
-                        width: 300,
+                        width: 400,
                         toolbar: "#barDemo",
                     },
                 ],
@@ -77,7 +64,7 @@
                 //将原始数据解析成 table 组件所规定的数据
                 return {
                     code: 200,
-                    data: res.pages, //解析数据列表
+                    data: res.slides, //解析数据列表
                 };
             },
         });
@@ -85,10 +72,20 @@
         //监听行工具事件
         table.on("tool(test)", function (obj) {
             var data = obj.data;
-            // console.log(obj);
-            // console.log(data)
             if (obj.event === "detail") {
-                window.open(data.url,'_blank');
+                // window.open(data.url,'_blank');
+                layer.open(({
+                    type: 2,
+                    title: "图片查看",
+                    content: "imageViewer.html",
+                    maxmin: true,
+                    area: ["1000px", "600px"],
+                    btn: ["确认", "关闭"],
+                    success: function (layero, index) {
+                        let body = layer.getChildFrame("body", index);
+                        body.find("#pic").attr("src", data.url);
+                    },
+                }));
             } else if (obj.event === "del") {
                 layer.confirm("真的删除行么", function (index) {
                     obj.del();
@@ -113,32 +110,64 @@
                     });
                     layer.close(index);
                 });
+            } else if (obj.event === "up"){
+                $.ajax({
+                    url: "//localhost/homePage.io/edit.php",
+                    type: "get",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "text",
+                    data: {
+                        method: "rankChange",
+                        how: "up",
+                        url: data.url,
+                    },
+                    success: function (res) {
+                        if (JSON.parse(res).status === "成功"){
+                            location.reload();
+                        }else {
+                            layer.msg(JSON.parse(res).status);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("失败！前端错误");
+                    },
+                });
+            } else if (obj.event === "down"){
+                $.ajax({
+                    url: "//localhost/homePage.io/edit.php",
+                    type: "get",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "text",
+                    data: {
+                        method: "rankChange",
+                        how: "down",
+                        url: data.url,
+                    },
+                    success: function (res) {
+                        if (JSON.parse(res).status === "成功"){
+                            location.reload();
+                        }else {
+                            layer.msg(JSON.parse(res).status);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("失败！前端错误");
+                    },
+                });
             } else if (obj.event === "edit") {
                 layer.open({
                     type: 2,
                     title: "Page信息编辑",
-                    content: "urlEdit.html",
+                    content: "pictureEdit.html",
                     maxmin: true,
-                    area: ["500px", "450px"],
+                    area: ["1000px", "350px"],
                     btn: ["提交", "取消"],
                     yes: function (index, layero) {
-                        var url = $(layero)
+                        let url = $(layero)
                             .find("iframe")[0]
                             .contentWindow.document.getElementById("url").value;
-                        var description = $(layero)
-                            .find("iframe")[0]
-                            .contentWindow.document.getElementById("description").value;
-                        var name = $(layero)
-                            .find("iframe")[0]
-                            .contentWindow.document.getElementById("name").value;
-                        var sort = $(layero)
-                            .find("iframe")[0]
-                            .contentWindow.document.getElementById("sort").value;
                         obj.update({
-                            name: name,
                             url: url,
-                            description: description,
-                            sort: sort,
                         });
 
                         $.ajax({
@@ -147,52 +176,36 @@
                             contentType: "application/json;charset=utf-8",
                             dataType: "text",
                             data: {
-                                method: "changeUrlData",
-                                name: name,
-                                url: url,
-                                description: description,
-                                sort: sort,
+                                method: "changePictureData",
+                                oldUrl: data.url,
+                                newUrl: url,
                             },
                             success: function (res) {
-                                layer.msg("编辑成功");
+                                layer.msg(JSON.parse(res).status);
                             },
-                            error: function (res) {
-                                layer.msg("编辑失败");
+                            error: function () {
+                                layer.msg("fail ! 未知错误");
                             },
                         });
                         layer.close(index);
                     },
                     success: function (layero, index) {
-                        var div = layero.find("iframe").contents().find("#admin");
                         var body = layer.getChildFrame("body", index);
-                        var ifrmaeWindow = window["layui-layer-iframe" + index];
-                        body.find("#name").val(data.name);
                         body.find("#url").val(data.url);
-                        body.find("#description").val(data.description);
-                        body.find("#sort").val(data.sort);
                     },
                 });
             } else if (obj.event === "add") {
                 layer.open({
                     type: 2,
                     title: "Page信息编辑",
-                    content: "urlEdit.html",
+                    content: "pictureEdit.html",
                     maxmin: true,
-                    area: ["500px", "450px"],
+                    area: ["1000px", "350px"],
                     btn: ["提交", "取消"],
                     yes: function (index, layero) {
                         var url = $(layero)
                             .find("iframe")[0]
                             .contentWindow.document.getElementById("url").value;
-                        var description = $(layero)
-                            .find("iframe")[0]
-                            .contentWindow.document.getElementById("description").value;
-                        var name = $(layero)
-                            .find("iframe")[0]
-                            .contentWindow.document.getElementById("name").value;
-                        var sort = $(layero)
-                            .find("iframe")[0]
-                            .contentWindow.document.getElementById("sort").value;
 
                         $.ajax({
                             url: "//localhost/homePage.io/edit.php",
@@ -200,11 +213,8 @@
                             contentType: "application/json;charset=utf-8",
                             dataType: "text",
                             data: {
-                                method: "addPage",
-                                name: name,
+                                method: "addPicture",
                                 url: url,
-                                description: description,
-                                sort: sort,
                             },
                             success: function (res) {
                                 layer.msg(JSON.parse(res).status);
