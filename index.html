@@ -70,7 +70,7 @@
 			  	arr = JSON.parse(res).pages;
 				  console.log(arr);
 				  for (i=0; i<arr.length;i++){
-				  	text = "<div class=\"box\" onclick='window.open(\""+arr[i].url+"\")'><div class=\"img\"><img src=\"images/"+Random(0,6)+".png\" alt=\"\" /></div><p>"+arr[i].name+"</p></div>";
+				  	text = "<div class=\"box\" onclick='window.open(\""+arr[i].url+"\")'><div class=\"img\"><img src=\"images/"+Random(1,6)+".png\" alt=\"\" /></div><p>"+arr[i].name+"</p></div>";
 					  $("#urlContain").append(text);
 				  }
 			  }
