@@ -12,10 +12,10 @@
       "description": "我的xss攻击接收平台"
     }],
   "slides": [
-    {"url": "https://images-wujunyi.oss-cn-shanghai.aliyuncs.com/blog/20210221210441.png?"},
-    {"url": "http222"},
-    {"url": "http333"},
-    {"url": "http444"},
-    {"url": "http555"}
+    {"url": "https://images-wujunyi.oss-cn-shanghai.aliyuncs.com/blog/20210301015424.jpeg"},
+    {"url": "https://images-wujunyi.oss-cn-shanghai.aliyuncs.com/blog/20210301022442.jpg"},
+    {"url": "https://images-wujunyi.oss-cn-shanghai.aliyuncs.com/blog/20210301022334.jpg"},
+    {"url": "https://images-wujunyi.oss-cn-shanghai.aliyuncs.com/blog/20210301022137.jpg"},
+    {"url": "https://images-wujunyi.oss-cn-shanghai.aliyuncs.com/blog/20210301020321.jpeg"}
   ]
 }

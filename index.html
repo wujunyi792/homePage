@@ -1,10 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>hahaha</title>
-</head>
-<body>
-<form action="edit.php" method="get">method: <input  type="text" value="getData" name="method"><button>提交</button></form>
-</body>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all" />
+    <title>新拟态</title>
+    <style>
+		html,body{
+			width: 100%;
+			height: 100%;
+		}
+		body{
+			position: relative;
+		}
+      .carousel {
+        width: 100%;
+        overflow: hidden;
+        position: absolute;
+		z-index: 10
+      }
+      .carousel img {
+        /*height: 100%;*/
+		/*  width: 100%;*/
+        /*top: 0;*/
+        /*left: 0;*/
+        /*position: relative;*/
+		/*  flex-shrink: 0;*/
+		  min-width: 100%;
+		  min-height: 100%;
+		  /*object-fit: cover;*/
+		  transition: transform 0.3s;
+      }
+      .carousel img:hover {
+        transform: scale(1.05);
+      }
+      .urlList {
+        z-index: 20;
+        width: 60%;
+        height: 60%;
+        background-color: rgba(255, 255, 255, 0.5);
+        position: absolute;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+      }
+	  .img-container{
+		  /*display: grid;*/
+		  justify-items: center;
+		  align-items: center;
+		  overflow: hidden;
+		  /*object-fit: cover;*/
+	  }
+    </style>
+    <link rel="stylesheet" href="css/index.css" />
+	  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+	  <script>
+		  function Random(min, max) {
+			  return Math.round(Math.random() * (max - min)) + min;
+		  }
+		  $.ajax({
+			  url: "//localhost/homePage.io/edit.php",
+			  type: "get",
+			  contentType: "application/json;charset=utf-8",
+			  dataType: "text",
+			  data: {
+			  	method: "getData",
+			  },
+			  success: function (res) {
+			  	arr = JSON.parse(res).pages;
+				  console.log(arr);
+				  for (i=0; i<arr.length;i++){
+				  	text = "<div class=\"box\" onclick='window.open(\""+arr[i].url+"\")'><div class=\"img\"><img src=\"images/"+Random(0,6)+".png\" alt=\"\" /></div><p>"+arr[i].name+"</p></div>";
+					  $("#urlContain").append(text);
+				  }
+			  }
+		  });
+		  $.ajax({
+			  url: "//localhost/homePage.io/edit.php",
+			  type: "get",
+			  contentType: "application/json;charset=utf-8",
+			  dataType: "text",
+			  data: {
+				  method: "getData",
+			  },
+			  success: function (res) {
+				  arr = JSON.parse(res).slides;
+				  console.log(arr);
+				  for (i=0; i<arr.length;i++){
+					  text = "<div class=\"img-container\"><img src=\""+arr[i].url+"\"/></div>\n";
+					  $("#pic").append(text);
+				  }
+			  }
+		  });
+	  </script>
+  </head>
+  <body>
+    <div class="layui-carousel carousel" id="backend">
+      <div carousel-item="" id="pic"></div>
+    </div>
+    <div class="urlList">
+        <div class="container" id="urlContain"></div>
+	</div>
+  </body>
+  <script src="/layui/layui.js"></script>
+  <script>
+    layui.use(["carousel", "form"], function () {
+      var carousel = layui.carousel,
+        form = layui.form;
+
+      //图片轮播
+      carousel.render({
+        elem: "#backend",
+        width: "100%",
+        height: "100%",
+        // full: true,
+        interval: 5000,
+      });
+    });
+  </script>
 </html>
